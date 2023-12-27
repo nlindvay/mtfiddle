@@ -38,7 +38,6 @@ public static class RabbitMqMassTransitConfigExtensions
                 });
                 cfg.ConfigureMessageTopology();
                 cfg.ConfigureEndpoints(context);
-                cfg.UseDelayedRedelivery(r => r.Intervals(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10)));
                 cfg.UseRateLimit(1000, TimeSpan.FromMinutes(2));
                 cfg.ConcurrentMessageLimit = 50;
                 cfg.PrefetchCount = 100;

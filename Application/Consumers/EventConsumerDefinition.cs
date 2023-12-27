@@ -5,17 +5,17 @@ using RabbitMQ.Client;
 
 namespace mtfiddle;
 
-public class OrderConsumerDefinition : ConsumerDefinition<OrderConsumer>
+public class EventConsumerDefinition : ConsumerDefinition<EventConsumer>
 {
     readonly string _type;
 
-    public OrderConsumerDefinition(IOptions<TypeOptions> routeOptions)
+    public EventConsumerDefinition(IOptions<ClaimCheckType> routeOptions)
     {
-        _type = routeOptions.Value.OrderType;
+        _type = routeOptions.Value.EventType;
         EndpointName = $"mtfiddle.interchange.{_type}";
     }
 
-    protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<OrderConsumer> consumerConfigurator, IRegistrationContext context)
+    protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<EventConsumer> consumerConfigurator, IRegistrationContext context)
     {
         endpointConfigurator.ConfigureConsumeTopology = false;
 

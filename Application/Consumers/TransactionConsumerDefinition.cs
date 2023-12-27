@@ -5,17 +5,17 @@ using RabbitMQ.Client;
 
 namespace mtfiddle;
 
-public class EventConsumerDefinition : ConsumerDefinition<EventConsumer>
+public class TransactionConsumerDefinition : ConsumerDefinition<TransactionConsumer>
 {
     readonly string _type;
 
-    public EventConsumerDefinition(IOptions<TypeOptions> routeOptions)
+    public TransactionConsumerDefinition(IOptions<ClaimCheckType> routeOptions)
     {
-        _type = routeOptions.Value.EventType;
+        _type = routeOptions.Value.TransactionType;
         EndpointName = $"mtfiddle.interchange.{_type}";
     }
 
-    protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<EventConsumer> consumerConfigurator, IRegistrationContext context)
+    protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<TransactionConsumer> consumerConfigurator, IRegistrationContext context)
     {
         endpointConfigurator.ConfigureConsumeTopology = false;
 
@@ -29,7 +29,6 @@ public class EventConsumerDefinition : ConsumerDefinition<EventConsumer>
                 x.SetBindingArgument("type", _type);
             });
         }
-
 
         if (endpointConfigurator is IServiceBusReceiveEndpointConfigurator azureServiceBus)
         {

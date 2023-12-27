@@ -9,7 +9,7 @@ public class ReceiveConsumerDefinition : ConsumerDefinition<ReceiveConsumer>
 {
     readonly string _type;
 
-    public ReceiveConsumerDefinition(IOptions<TypeOptions> routeOptions)
+    public ReceiveConsumerDefinition(IOptions<ClaimCheckType> routeOptions)
     {
         _type = routeOptions.Value.ReceiveType;
         EndpointName = $"mtfiddle.interchange.{_type}";
