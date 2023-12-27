@@ -1,0 +1,36 @@
+version: "3.6"
+name: "blob-db-queue"
+networks:
+  blobs-and-queues:
+
+services:
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    networks:
+      - blobs-and-queues
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+  mongodb:
+    image: mongo:latest
+    networks:
+      - blobs-and-queues
+    ports:
+      - "27017-27019:27017-27019"
+  rabbitmq:
+    image: masstransit/rabbitmq:latest
+    networks:
+      - blobs-and-queues
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "15692:15692"
+    healthcheck:
+      test:
+        - "CMD"
+        - "rabbitmqctl"
+        - "status"
+      interval: 10s
+      timeout: 5s
+      retries: 3
