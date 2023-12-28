@@ -9,9 +9,9 @@ public class OrderConsumerDefinition : ConsumerDefinition<OrderConsumer>
 {
     readonly string _type;
 
-    public OrderConsumerDefinition(IOptions<ClaimCheckType> routeOptions)
+    public OrderConsumerDefinition()
     {
-        _type = routeOptions.Value.OrderType;
+        _type = ClaimCheckType.OrderType;
         EndpointName = $"mtfiddle.interchange.{_type}";
     }
 

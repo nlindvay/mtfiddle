@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using mtfiddle.Application;
 
 namespace mtfiddle;
@@ -13,16 +12,12 @@ public class ClaimCheckProvider : IClaimCheckProvider
 {
     private readonly BlobContainerClient _blobContainerClient;
     private readonly ILogger<ClaimCheckProvider> _logger;
-    private readonly ClaimCheckType TypeOptions;
 
-    public ClaimCheckType ClaimCheckType => throw new System.NotImplementedException();
-
-    public ClaimCheckProvider(BlobServiceClient blobServiceClient, ILogger<ClaimCheckProvider> logger, IOptions<ClaimCheckType> typeOptions)
+    public ClaimCheckProvider(BlobServiceClient blobServiceClient, ILogger<ClaimCheckProvider> logger)
     {
         _blobContainerClient = blobServiceClient.GetBlobContainerClient("mtfiddle");
         _blobContainerClient.CreateIfNotExists();
         _logger = logger;
-        TypeOptions = typeOptions.Value;
     }
 
     public async Task<Result<ClaimCheck?>> GetAsync(string uri)

@@ -34,7 +34,7 @@ public class EventConsumer : IConsumer<ClaimCheck>
 
         await _eventProvider.CreateAsync(entity);
 
-        if (entity.TargetType == _claimProvider.TypeOptions.ReceiveType)
+        if (entity.TargetType == ClaimCheckType.ReceiveType)
         {
             Result<Receive?> receiveResult = await _receiveProvider.GetAsync(entity.TargetId);
 
@@ -45,7 +45,7 @@ public class EventConsumer : IConsumer<ClaimCheck>
             receive.ApplyEventUpdates(entity);
             await _receiveProvider.UpdateAsync(receive);
         }
-        else if (entity.TargetType == _claimProvider.TypeOptions.OrderType)
+        else if (entity.TargetType == ClaimCheckType.OrderType)
         {
             Result<Order?> orderResult = await _orderProvider.GetAsync(entity.TargetId);
 
@@ -56,7 +56,7 @@ public class EventConsumer : IConsumer<ClaimCheck>
             order.ApplyEventUpdates(entity);
             await _orderProvider.UpdateAsync(order);
         }
-        else if (entity.TargetType == _claimProvider.TypeOptions.TransactionType)
+        else if (entity.TargetType == ClaimCheckType.TransactionType)
         {
             Result<Transaction?> transactionResult = await _transactionProvider.GetAsync(entity.TargetId);
 

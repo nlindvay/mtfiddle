@@ -1,10 +1,8 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 
 namespace mtfiddle;
@@ -17,9 +15,8 @@ public class MockMessageProvider : BackgroundService
     readonly ReceiveProvider _receiveProvider;
     readonly TransactionProvider _transactionProvider;
     readonly ILogger<MockMessageProvider> _logger;
-    readonly ClaimCheckType _typeOptions;
 
-    public MockMessageProvider(IBus bus, ClaimCheckProvider claimProvider, OrderProvider orderProvider, ReceiveProvider receiveProvider, TransactionProvider transactionProvider, ILogger<MockMessageProvider> logger, IOptions<ClaimCheckType> options)
+    public MockMessageProvider(IBus bus, ClaimCheckProvider claimProvider, OrderProvider orderProvider, ReceiveProvider receiveProvider, TransactionProvider transactionProvider, ILogger<MockMessageProvider> logger)
     {
         _bus = bus;
         _claimProvider = claimProvider;
@@ -27,7 +24,6 @@ public class MockMessageProvider : BackgroundService
         _receiveProvider = receiveProvider;
         _transactionProvider = transactionProvider;
         _logger = logger;
-        _typeOptions = options.Value;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,11 +38,11 @@ public class MockMessageProvider : BackgroundService
             string reference = ObjectId.GenerateNewId().ToString();
             string type = GetTypeSelection(typeSelection);
 
-            if (type == _typeOptions.EventType)
+            if (type == ClaimCheckType.EventType)
             {
                 string targetType = GetTargetTypeSelection(targetTypeSelection);
 
-                if (targetType == _typeOptions.ReceiveType)
+                if (targetType == ClaimCheckType.ReceiveType)
                 {
                     var result = await _receiveProvider.GetFirstEnteredId();
                     if (result.IsSuccessful)
@@ -54,7 +50,7 @@ public class MockMessageProvider : BackgroundService
                     else
                         _logger.LogError($"MockMessageProvider: {result.Status} {result.Message}");
                 }
-                else if (targetType == _typeOptions.OrderType)
+                else if (targetType == ClaimCheckType.OrderType)
                 {
                     var result = await _orderProvider.GetFirstEnteredId();
                     if (result.IsSuccessful)
@@ -62,7 +58,7 @@ public class MockMessageProvider : BackgroundService
                     else
                         _logger.LogError($"MockMessageProvider: {result.Status} {result.Message}");
                 }
-                else if (targetType == _typeOptions.TransactionType)
+                else if (targetType == ClaimCheckType.TransactionType)
                 {
                     var result = await _transactionProvider.GetFirstUnpaidId();
                     if (result.IsSuccessful)
@@ -78,15 +74,15 @@ public class MockMessageProvider : BackgroundService
 
                 targetTypeSelection = ++targetTypeSelection == 3 ? 0 : targetTypeSelection++;
             }
-            else if (type == _typeOptions.OrderType)
+            else if (type == ClaimCheckType.OrderType)
             {
                 content = new NewOrder(reference).ToJson();
             }
-            else if (type == _typeOptions.ReceiveType)
+            else if (type == ClaimCheckType.ReceiveType)
             {
                 content = new NewReceive(reference).ToJson();
             }
-            else if (type == _typeOptions.TransactionType)
+            else if (type == ClaimCheckType.TransactionType)
             {
                 content = new NewTransaction(reference).ToJson();
             }
@@ -116,19 +112,19 @@ public class MockMessageProvider : BackgroundService
 
     protected string GetTypeSelection(int counter) => counter switch
     {
-        0 => _typeOptions.OrderType,
-        1 => _typeOptions.ReceiveType,
-        2 => _typeOptions.TransactionType,
-        3 => _typeOptions.EventType,
-        4 => _typeOptions.EventType,
+        0 => ClaimCheckType.OrderType,
+        1 => ClaimCheckType.ReceiveType,
+        2 => ClaimCheckType.TransactionType,
+        3 => ClaimCheckType.EventType,
+        4 => ClaimCheckType.EventType,
         _ => string.Empty
     };
 
     protected string GetTargetTypeSelection(int counter) => counter switch
     {
-        0 => _typeOptions.OrderType,
-        1 => _typeOptions.ReceiveType,
-        2 => _typeOptions.TransactionType,
+        0 => ClaimCheckType.OrderType,
+        1 => ClaimCheckType.ReceiveType,
+        2 => ClaimCheckType.TransactionType,
         _ => string.Empty
     };
 }

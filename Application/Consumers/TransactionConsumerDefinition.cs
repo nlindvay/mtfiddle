@@ -9,9 +9,9 @@ public class TransactionConsumerDefinition : ConsumerDefinition<TransactionConsu
 {
     readonly string _type;
 
-    public TransactionConsumerDefinition(IOptions<ClaimCheckType> routeOptions)
+    public TransactionConsumerDefinition()
     {
-        _type = routeOptions.Value.TransactionType;
+        _type = ClaimCheckType.TransactionType;
         EndpointName = $"mtfiddle.interchange.{_type}";
     }
 

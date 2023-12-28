@@ -9,9 +9,9 @@ public class EventConsumerDefinition : ConsumerDefinition<EventConsumer>
 {
     readonly string _type;
 
-    public EventConsumerDefinition(IOptions<ClaimCheckType> routeOptions)
+    public EventConsumerDefinition()
     {
-        _type = routeOptions.Value.EventType;
+        _type = ClaimCheckType.EventType;
         EndpointName = $"mtfiddle.interchange.{_type}";
     }
 

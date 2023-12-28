@@ -20,7 +20,6 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
             services.AddSingleton<ReceiveProvider>();
             services.AddSingleton<OrderProvider>();
             services.AddSingleton<TransactionProvider>();
-            services.AddOptions<ClaimCheckType>();
             services.AddAzureClients(cfg => cfg.AddBlobServiceClient("UseDevelopmentStorage=true").ConfigureOptions(o => o.Diagnostics.IsLoggingEnabled = false));
             services.AddSingleton<ClaimCheckProvider>();
             services.ConfigureMassTransit();
